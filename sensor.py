@@ -26,10 +26,11 @@ class soilHumiditySensor(sensor):
         self.sensor = sensor(id, status)
         self.max = 100
 
-    def readData(self, updateCntr):
-        if (self.sensor.sensorValue >= self.max):
-            self.sensor.sensorValue = self.sensor.sensorValue - updateCntr
-        else:
+    def readData(self, updateCntr, isReset):
+        if isReset == 'true':
+            self.sensor.sensorValue = 0
+
+        if (self.sensor.sensorValue <= self.max):
             self.sensor.sensorValue = self.sensor.sensorValue + updateCntr
         return self.sensor.sensorValue
 

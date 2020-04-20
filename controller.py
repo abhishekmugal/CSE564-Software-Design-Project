@@ -44,8 +44,8 @@ class dripController(controller):
         self.sensor = soilHumiditySensor(id, 'start')
         self.frequency = 900 #in hz
 
-    def readSensorValue(self, updateCntr):
-        self.sensorValue = self.sensor.readData(updateCntr)
+    def readSensorValue(self, updateCntr, isReset):
+        self.sensorValue = self.sensor.readData(updateCntr, isReset)
         return self.sensorValue
 
 

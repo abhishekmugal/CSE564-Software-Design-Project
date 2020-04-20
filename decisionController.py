@@ -2,20 +2,23 @@ from dbConfig import dbConfig
 import mysql.connector
 class DecisionController:
     def __init__(self, operationType):
-        self.__databaseObj = mysql.connector.connect(
-            host=dbConfig['host'],
-            user=dbConfig['user'],
-            password=dbConfig['password'],
-            port = dbConfig['port'],
-            database = dbConfig['database']
-        )
-        self.conn = self.__databaseObj.cursor()
+
         self.__operationType = operationType
 
     def fetchConfigurationValues(self):
-        self.conn.execute('select * from farmconfiguration')
-        res = self.conn.fetchall()
+        __databaseObj = mysql.connector.connect(
+            host=dbConfig['host'],
+            user=dbConfig['user'],
+            password=dbConfig['password'],
+            port=dbConfig['port'],
+            database=dbConfig['database']
+        )
+        conn = __databaseObj.cursor()
+        conn.execute('select * from farmconfiguration')
+        res = conn.fetchall()
         print(res)
+        conn.close()
+        __databaseObj.close()
         return res
 
     def setBufferData(self, data):

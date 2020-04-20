@@ -16,7 +16,9 @@ def hello():
 def getActuatorStatus():
     data = request.json
     d.setBufferData(data)
-    return d.compareConfigurationValues()
+    res = d.compareConfigurationValues()
+    print(res)
+    return res
 
 @app.route('/getFarmConfiguration', methods=['GET'])
 def getFarmConfiguration():
@@ -38,9 +40,11 @@ def chunker_list(seq, size):
 def getSensorValues():
     res = []
     cntr = request.args.get('cntr')
+    reset =request.args.get('isReset')
+    print(reset)
     for i in range(0, len(controllers)):
         res.append(
-            { 'val': controllers[i].readSensorValue(int(cntr)) }
+            { 'val': controllers[i].readSensorValue(int(cntr), reset) }
         )
     print(list(chunker_list(res, 4)))
     res = list(chunker_list(res, 4))
