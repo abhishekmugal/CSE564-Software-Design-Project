@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask import render_template
 from decisionController import DecisionController
+from UserInterface import UserInterface
 app = Flask(__name__)
 
 
@@ -14,10 +15,20 @@ def getActuatorStatus():
     d.setBufferData(data)
     return d.compareConfigurationValues()
 
+@app.route('/getFarmConfiguration', methods=['GET'])
+def getFarmConfiguration():
+    return u.getFarmConfigurationValues()
+
+@app.route('/saveFarmConfigurationDetails', methods=['POST'])
+def saveFarmConfigurationDetails():
+    data = request.json
+    u.setFarmData(data)
+
 @app.route('/farmConfiguration')
 def farmConfiguration():
     return render_template('farm_config.html')
     
 if __name__ == '__main__':
     d = DecisionController('start')
+    u = UserInterface()
     app.run(debug=True)
