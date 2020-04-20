@@ -15,8 +15,11 @@ $(document).ready(function(){
                 'sensorValue': formData.sensorValue2
             };
 
+            
             checkActuatorStatus(formattedData1);
-            checkActuatorStatus(formattedData2);
+            setTimeout(() => {
+                checkActuatorStatus(formattedData2);
+            }, 500);
         });
 
     });
@@ -25,7 +28,8 @@ $(document).ready(function(){
         $.ajax({
             type: "POST",
             dataType: "json",
-            data: formData,
+            data: JSON.stringify(formData),
+            contentType: "application/json",
             url: "/getActuatorStatus",
             success: function (data) {
                 var actuatorStatus = data.actuatorStart;

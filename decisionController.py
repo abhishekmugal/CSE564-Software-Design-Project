@@ -9,12 +9,13 @@ class DecisionController:
             port = dbConfig['port'],
             database = dbConfig['database']
         )
+        self.conn = self.__databaseObj.cursor()
         self.__operationType = operationType
 
     def fetchConfigurationValues(self):
-        cursor = self.__databaseObj.cursor()
-        cursor.execute('select * from farmconfiguration')
-        res = cursor.fetchall()
+        self.conn.execute('select * from farmconfiguration')
+        res = self.conn.fetchall()
+        print(res)
         return res
 
     def setBufferData(self, data):
