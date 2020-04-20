@@ -15,16 +15,15 @@ $(document).ready(function(){
                 'sensorValue': formData.sensorValue2
             };
 
-            
-            checkActuatorStatus(formattedData1);
+            checkActuatorStatus(formattedData1, 1);
             setTimeout(() => {
-                checkActuatorStatus(formattedData2);
+                checkActuatorStatus(formattedData2, 2);
             }, 500);
         });
 
     });
 
-    function checkActuatorStatus(formData){
+    function checkActuatorStatus(formData, type){
         $.ajax({
             type: "POST",
             dataType: "json",
@@ -34,17 +33,64 @@ $(document).ready(function(){
             success: function (data) {
                 var actuatorStatus = data.actuatorStart;
                 var $region = $("#region" + formData.regionId);
-
-                $region.find('.actuator input').removeAttr('checked').parent().removeClass('active');
+                
+                $region.find('.actuator'+type+' input').removeAttr('checked').parent().removeClass('active');
                 if(actuatorStatus) {
-                    $region.find('.actuator input[name="act-on"]').attr('checked').parent().addClass('active');
-                    $region.find('.current-status').text('Running').parent().addClass('text-success');
+                    $region.find('.actuator'+type+' input[name="act-on"]').attr('checked');
+                    $region.find('.actuator'+type+' input[name="act-on"]').parent().addClass('active');
+                    $region.find('.status'+type+' .current-status').text('Running').parent().removeClass().addClass('text-success');
                 } else {
-                    $region.find('.actuator input[name="act-off"]').attr('checked').parent().addClass('active');
-                    $region.find('.current-status').text('Stopped').parent().addClass('text-warning');
+                    $region.find('.actuator'+type+' input[name="act-off"]').attr('checked');
+                    $region.find('.actuator'+type+' input[name="act-off"]').parent().addClass('active');
+                    $region.find('.status'+type+' .current-status').text('Stopped').parent().removeClass().addClass('text-warning');
                 }
             }
         });
     }
 
+    $('.trigger-fail').click(function(){
+        var actuatorId = $(this).data("id");
+        var type = $(this).data("type");
+        var regionId = $(this).parent().find('input[name="regionId"]').val();
+        var $ele = $('.'+type+'-status .region'+regionId);
+
+        $(this).closest('.card').addClass('border-danger');
+
+        if($ele.attr('data-clicked') != actuatorId) {
+            $ele.attr('data-clicked', actuatorId);
+
+            var failCount = parseInt($ele.attr('data-fail'), 10);
+            var runningCount = parseInt($ele.attr('data-running'), 10);
+            console.log(failCount);
+            if(failCount != 2) {
+                $ele.attr("data-fail", failCount + 1);
+                $ele.find('.fail span').text(failCount + 1);
+            }
+            if(runningCount != 0) {
+                $ele.attr("data-running", runningCount - 1);
+                $ele.find('.running span').text(runningCount - 1);
+            }
+        }
+    });
+
+    $.get("/getFarmConfiguration", function (data, status) {
+        const cropType = data.configuration.map(e => e[2]);
+        const soilType = data.configuration.map(e => e[3]);
+        const soilThreshold = data.configuration.map(e => e[4]);
+        
+        $('.config-values .farm-location').text(data.farmLocation);
+
+        $('.config-values .crop-type').each(function(i){
+            $(this).text(cropType[i]);
+        });
+
+        $('.config-values .soil-type').each(function(i){
+            $(this).text(soilType[i]);
+        });
+
+        $('.config-values .humidity-level').each(function(i){
+            $(this).text(soilThreshold[i]);
+            $('#region'+(i + 1)+ ' .soil-threshold span').text(soilThreshold[i]);
+        });
+    });
 });
