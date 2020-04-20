@@ -15,6 +15,7 @@ def hello():
 @app.route('/getActuatorStatus', methods=['POST'])
 def getActuatorStatus():
     data = request.json
+    d = DecisionController('start')
     d.setBufferData(data)
     res = d.compareConfigurationValues()
     print(res)
@@ -50,7 +51,6 @@ def getSensorValues():
     res = list(chunker_list(res, 4))
     return json.dumps(res)
 if __name__ == '__main__':
-    d = DecisionController('start')
     u = UserInterface()
     controllers = []
     for i in range(1, 9):

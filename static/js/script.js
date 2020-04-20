@@ -32,18 +32,21 @@ $(document).ready(function(){
             url: "http://192.168.0.5/getActuatorStatus",
             success: function (data) {
                 var actuatorStatus = data.actuatorStart;
-                var $region = $("#region" + formData.regionId);
+                var $region = $("#region" + data.regionId);
+                [1, 2].forEach(e => {
+                    type = e;
+                    $region.find('.actuator'+type+' input').removeAttr('checked').parent().removeClass('active');
+                    if(actuatorStatus) {
+                        $region.find('.actuator'+type+' input[name="act-on"]').attr('checked');
+                        $region.find('.actuator'+type+' input[name="act-on"]').parent().addClass('active');
+                        $region.find('.status'+type+' .current-status').text('Running').parent().removeClass().addClass('text-success');
+                    } else {
+                        $region.find('.actuator'+type+' input[name="act-off"]').attr('checked');
+                        $region.find('.actuator'+type+' input[name="act-off"]').parent().addClass('active');
+                        $region.find('.status'+type+' .current-status').text('Stopped').parent().removeClass().addClass('text-warning');
+                    }
+                })
                 
-                $region.find('.actuator'+type+' input').removeAttr('checked').parent().removeClass('active');
-                if(actuatorStatus) {
-                    $region.find('.actuator'+type+' input[name="act-on"]').attr('checked');
-                    $region.find('.actuator'+type+' input[name="act-on"]').parent().addClass('active');
-                    $region.find('.status'+type+' .current-status').text('Running').parent().removeClass().addClass('text-success');
-                } else {
-                    $region.find('.actuator'+type+' input[name="act-off"]').attr('checked');
-                    $region.find('.actuator'+type+' input[name="act-off"]').parent().addClass('active');
-                    $region.find('.status'+type+' .current-status').text('Stopped').parent().removeClass().addClass('text-warning');
-                }
             }
         });
     }
@@ -97,46 +100,44 @@ $(document).ready(function(){
     });
 
     $('.system-mode input[name="system-mode"]').change(function(){
-        var systemMode = $(this).val();
+        let systemMode = $(this).val();
         if(systemMode == "on") {
             $('.water-source-actuator').empty().append('<p class="text-success"><i class="fas fa-check-circle"></i> ON</p>');
 
-            var thresholdReachedRegions = [];
+            let thresholdReachedRegions = [];
             
-            var setSensorValues = setInterval(function(){
-                var cntr = 20;
+            let setSensorValues = setInterval(() => {
+                let cntr = 20;
 
-                $.get('http://192.168.0.5/getSensorValues?cntr='+cntr+'&isReset=false', function(data){
-                    data = JSON.parse(data);
+                $.get('http://192.168.0.5/getSensorValues?cntr='+cntr+'&isReset=false', function(d){
+                    const data = JSON.parse(d);
 
-                    $.each(data, function(i, v){
-                        var sensorValue1 = parseInt(v[0].val, 10);
-                        var sensorValue2 = parseInt(v[1].val, 10);
-                        var regionId = (i + 1);
+                    data.forEach((v, i) => {
+                        //console.log(i);
+                        let sensorValue1 = parseInt(v[0].val, 10);
+                        let sensorValue2 = parseInt(v[1].val, 10);
+                        let regionId = (i + 1);
 
                         // Get threshold value to check with the current value
-                        var soilThreshold = parseInt($('#region'+regionId+ ' .soil-threshold span').text(), 10);
+                        let soilThreshold = parseInt($('#region'+(i+1)+ ' .soil-threshold span').text(), 10);
 
                         if(!thresholdReachedRegions.includes(regionId)) {
                             $('#region'+regionId+' input[name="sensorValue1"]').val(sensorValue1);
                             $('#region'+regionId+' input[name="sensorValue2"]').val(sensorValue2);
                         
                             // Check Actuator Status
-                            var formattedData1 = {
-                                'regionId': regionId,
+                            let formattedData1 = {
+                                'regionId': i+1,
                                 'sensorValue': sensorValue1
                             };
-                            var formattedData2 = {
-                                'regionId': regionId,
+                            let formattedData2 = {
+                                'regionId': i+1,
                                 'sensorValue': sensorValue2
                             };
+                            console.log(formattedData1, formattedData2)
                 
-                            setTimeout(() => {
-                                checkActuatorStatus(formattedData1, 1);
-                            }, 500);
-                            setTimeout(() => {
-                                checkActuatorStatus(formattedData2, 2);
-                            }, 500);
+                            checkActuatorStatus(formattedData1, 1);
+                            //checkActuatorStatus(formattedData2, 2);
 
                         }
                         
@@ -154,7 +155,7 @@ $(document).ready(function(){
                     });
                 });
 
-            }, 10000);
+            }, 5000);
 
 
         } else {
@@ -162,3 +163,5 @@ $(document).ready(function(){
         }
     });
 });
+
+$.get('http://192.168.0.5/getSensorValues?cntr=0&isReset=true');
