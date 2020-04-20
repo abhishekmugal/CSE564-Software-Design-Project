@@ -31,7 +31,7 @@ function submitBtn() {
     Array.from(document.getElementsByClassName('threshold')).forEach((e, i) => {
         objToPost.configuration[i].push(e.value)
     })
-    console.log(objToPost)
+    console.log(JSON.stringify(objToPost))
 }
 
 

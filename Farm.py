@@ -10,19 +10,28 @@ class Farm:
             port=dbConfig['port'],
             database=dbConfig['database']
         )
-
+        self.cursor = self.__databaseObj.cursor()
 
     def saveData(self):
-        return ''
+        print(self.cropType)
+        for i in range(0, len(self.cropType)):
+            statement = "update farmconfiguration set cropType='"+self.cropType[i]+"' where regionId="+str(i+1)
+            statement1 = "update farmconfiguration set soilType='"+self.soilType[i]+"' where regionId="+str(i+1)
+            statement2 = "update farmconfiguration set soilHumidityThreshold='"+self.soilHumidityLevel[i]+"' where regionId="+str(i+1)
+            self.cursor.execute(statement)
+            self.cursor.execute(statement1)
+            self.cursor.execute(statement2)
+
+        self.__databaseObj.commit()
+        return True
 
     def getFarm(self):
-        cursor = self.__databaseObj.cursor()
-        cursor.execute('select * from farmlocation')
-        res = cursor.fetchall()
-        cursor.execute('select * from farmconfiguration')
+        self.cursor.execute('select * from farmlocation')
+        res = self.cursor.fetchall()
+        self.cursor.execute('select * from farmconfiguration')
         result = {
             'farmLocation': res[0][0],
-            'configuration': cursor.fetchall()
+            'configuration': self.cursor.fetchall()
         }
         return result
 
@@ -61,3 +70,4 @@ class Farm:
 
     def setIrrigationType(self, irrigationType):
         self.irrigationType = irrigationType
+

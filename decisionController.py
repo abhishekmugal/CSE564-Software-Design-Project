@@ -28,8 +28,8 @@ class DecisionController:
         configValues = self.fetchConfigurationValues()
         data = self.readBufferData()
         for i in range(0, len(configValues)):
-            if (configValues[i][1] == data['regionId']):
-                if (configValues[i][4] > data['sensorValue']):
+            if (configValues[i][1] == int(data['regionId'])):
+                if (configValues[i][4] > int(data['sensorValue'])):
                     data['actuatorStart'] = True
                 else:
                     data['actuatorStart'] = False

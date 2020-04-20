@@ -16,7 +16,8 @@ class UserInterface:
         self.farm.setRegion([item[1] for item in data['configuration']])
         self.farm.setCrop([item[2] for item in data['configuration']])
         self.farm.setSoilType([item[3] for item in data['configuration']])
-        return
+        #self.farm.saveData()
+        return {'status': self.farm.saveData() }
 
     def setOperationMode(self):
         return
