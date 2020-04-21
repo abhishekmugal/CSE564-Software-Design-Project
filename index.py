@@ -55,4 +55,4 @@ if __name__ == '__main__':
     controllers = []
     for i in range(1, 9):
         controllers.append(dripController(i))
-    app.run(debug=False, port=80, host='0.0.0.0')
+    app.run(debug=True, port=80, host='0.0.0.0')
