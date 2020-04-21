@@ -71,7 +71,7 @@ $(document).ready(function () {
                                     d.getMinutes().padLeft(),
                                     d.getSeconds().padLeft()].join(':');
 
-                        $region.find('.endTime p').empty().text(dformat);
+                        $region.find('.endTime' + type + ' p').empty().text(dformat);
                     }
                 })
 
