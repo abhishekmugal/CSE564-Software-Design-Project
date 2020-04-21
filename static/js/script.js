@@ -23,6 +23,11 @@ $(document).ready(function () {
 
     });
 
+    Number.prototype.padLeft = function(base,chr){
+        var  len = (String(base || 10).length - String(this).length)+1;
+        return len > 0? new Array(len).join(chr || '0')+this : this;
+    }
+
     function checkActuatorStatus(formData, type) {
         $.ajax({
             type: "POST",
@@ -40,10 +45,33 @@ $(document).ready(function () {
                         $region.find('.actuator' + type + ' input[name="act-on"]').attr('checked');
                         $region.find('.actuator' + type + ' input[name="act-on"]').parent().addClass('active');
                         $region.find('.status' + type + ' .current-status').text('Running').parent().removeClass().addClass('text-success');
+
+                        // Set the start time for the actuator
+                        const d = new Date,
+                            dformat = [(d.getMonth()+1).padLeft(),
+                                    d.getDate().padLeft(),
+                                    d.getFullYear()].join('/') +' ' +
+                                    [d.getHours().padLeft(),
+                                    d.getMinutes().padLeft(),
+                                    d.getSeconds().padLeft()].join(':');
+
+                        $region.find('.startTime' + type + ' p').empty().text(dformat);
+
                     } else {
                         $region.find('.actuator' + type + ' input[name="act-off"]').attr('checked');
                         $region.find('.actuator' + type + ' input[name="act-off"]').parent().addClass('active');
                         $region.find('.status' + type + ' .current-status').text('Stopped').parent().removeClass().addClass('text-warning');
+
+                        // Set the end time for the actuator
+                        const d = new Date,
+                            dformat = [(d.getMonth()+1).padLeft(),
+                                    d.getDate().padLeft(),
+                                    d.getFullYear()].join('/') +' ' +
+                                    [d.getHours().padLeft(),
+                                    d.getMinutes().padLeft(),
+                                    d.getSeconds().padLeft()].join(':');
+
+                        $region.find('.endTime p').empty().text(dformat);
                     }
                 })
 
