@@ -44,7 +44,7 @@ $(document).ready(function () {
                     if (actuatorStatus) {
                         $region.find('.actuator' + type + ' input[name="act-on"]').attr('checked');
                         $region.find('.actuator' + type + ' input[name="act-on"]').parent().addClass('active');
-                        $region.find('.status' + type + ' .current-status').text('Running').parent().removeClass().addClass('text-success');
+                        $region.find('.status' + type + ' .current-status').html('<i class="fa fa-check"></i> Running').parent().removeClass().addClass('text-success');
 
                         // Set the start time for the actuator
                         const d = new Date,
@@ -60,7 +60,7 @@ $(document).ready(function () {
                     } else {
                         $region.find('.actuator' + type + ' input[name="act-off"]').attr('checked');
                         $region.find('.actuator' + type + ' input[name="act-off"]').parent().addClass('active');
-                        $region.find('.status' + type + ' .current-status').text('Stopped').parent().removeClass().addClass('text-warning');
+                        $region.find('.status' + type + ' .current-status').html('<i class="fa fa-warning"></i> Stopped').parent().removeClass().addClass('text-warning');
 
                         // Set the end time for the actuator
                         const d = new Date,
