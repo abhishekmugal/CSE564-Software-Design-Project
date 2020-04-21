@@ -54,9 +54,9 @@ $(document).ready(function () {
     $('.trigger-fail').click(function () {
         var actuatorId = $(this).data("id");
         var type = $(this).data("type");
-        var regionId = $(this).parent().find('input[name="regionId"]').val();
+        var regionId = $(this).closest('form').find('input[name="regionId"]').val();
         var $ele = $('.' + type + '-status .region' + regionId);
-        console.log(type, regionId, actuatorId)
+        
         alertify.set('notifier', 'position', 'top-right');
         alertify.error(`${type.toUpperCase()} with ID ${actuatorId} in region 1 has failed`);
         $(this).closest('.card').addClass('border-danger');
